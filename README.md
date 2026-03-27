@@ -10,3 +10,7 @@
 <h1>Quiz from chat</h1>
 <img width="1864" height="855" alt="image" src="https://github.com/user-attachments/assets/61045c9c-3ef2-431c-8966-f0b6092bcc3e" />
 
+<h1>Results</h1>
+<img width="1496" height="860" alt="image" src="https://github.com/user-attachments/assets/d6522baa-d0c3-485c-86f1-e8746291d2a6" />
+
+
