@@ -1,5 +1,6 @@
 import streamlit as st
 from src.utils.helper_functions import QuizManager
+from src.rag.pipeline import RAGPipeline
 
 
 def init_session_state():
@@ -11,6 +12,8 @@ def init_session_state():
         "quiz_submitted": False,
         "quiz_source": "topic",
         "quiz_context": None,
+        "rag": RAGPipeline(),
+        "last_uploaded_file": None,
         "chat_sessions": {},
         "active_chat_id": None,
         "rerun_trigger": False,

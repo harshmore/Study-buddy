@@ -19,7 +19,7 @@ class QuizManager:
     def generate_questions(
         self,
         generator: QuestionGenerator,
-        topic: str,
+        context: str,
         question_type: str,
         difficulty: str,
         num_questions: int,
@@ -32,7 +32,7 @@ class QuizManager:
             for _ in range(num_questions):
                 if question_type == "Single Choice":
                     question = generator.generate_mcq(
-                        topic=topic, difficulty=difficulty
+                        context=context, difficulty=difficulty
                     )
                     self.questions.append(
                         {
@@ -44,7 +44,7 @@ class QuizManager:
                     )
                 elif question_type == "Multiple Choice":
                     question = generator.generate_multiple_answer(
-                        topic=topic, difficulty=difficulty
+                        context=context, difficulty=difficulty
                     )
                     self.questions.append(
                         {
@@ -56,7 +56,7 @@ class QuizManager:
                     )
                 else:
                     question = generator.generate_fill_blank(
-                        topic=topic, difficulty=difficulty
+                        context=context, difficulty=difficulty
                     )
                     self.questions.append(
                         {

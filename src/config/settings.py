@@ -20,6 +20,8 @@ class Settings:
         "llama-3.1-8b-instant",
     ]
 
+    EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+
     TEMPERATURE = 0.9
 
     MAX_RETRIES = 3

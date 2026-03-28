@@ -1,5 +1,5 @@
-from langchain.prompts import PromptTemplate
-from langchain.output_parsers import PydanticOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import PydanticOutputParser
 from src.config.settings import settings
 from src.common.logger import get_logger
 from src.common.custom_exception import CustomException

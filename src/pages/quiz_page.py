@@ -4,6 +4,7 @@ from src.config.settings import settings
 from src.utils.helper_functions import rerun
 from src.pages.state import reset_quiz_state
 from src.generator.question_generator import QuestionGenerator
+from src.rag.pipeline import RAGPipeline
 
 
 def render_quiz_page():
@@ -11,13 +12,21 @@ def render_quiz_page():
 
     prev_mode = st.session_state.quiz_source
 
+    MODE_MAP = {"Topic": "topic", "Chat Conversation": "chat", "File Upload": "file"}
+
     quiz_mode = st.sidebar.radio(
         "Quiz Source",
-        ["Topic", "Chat Conversation"],
-        index=0 if st.session_state.quiz_source == "topic" else 1,
+        list(MODE_MAP.keys()),
+        index=(
+            list(MODE_MAP.values()).index(st.session_state.quiz_source)
+            if st.session_state.quiz_source in MODE_MAP.values()
+            else 0
+        ),
     )
 
-    new_mode = "chat" if quiz_mode == "Chat Conversation" else "topic"
+    new_mode = MODE_MAP[quiz_mode]
+
+    # new_mode = "chat" if quiz_mode == "Chat Conversation" else "topic"
     if new_mode != prev_mode:
         reset_quiz_state()
         st.session_state.quiz_source = new_mode
@@ -29,6 +38,24 @@ def render_quiz_page():
     )
     if st.session_state.quiz_source == "topic":
         topic = st.sidebar.text_input("Enter topic")
+
+    elif st.session_state.quiz_source == "file":
+        uploaded_file = st.sidebar.file_uploader(
+            "Upload document", type=["pdf", "txt", "docx"]
+        )
+        
+        if uploaded_file:
+            file_id = uploaded_file.name
+
+            if st.session_state.get("last_uploaded_file") != file_id:
+                st.session_state.rag.ingest(uploaded_file)
+                st.session_state.last_uploaded_file = file_id
+                st.success("File processed successfully!")
+        
+
+    if st.session_state.quiz_source == "file" and not st.session_state.rag.retriever:
+        st.warning("File not processed yet.")
+        return
 
     difficulty = st.sidebar.selectbox(
         "Difficulty level", ["Easy", "Medium", "Hard"], index=1
@@ -47,19 +74,31 @@ def render_quiz_page():
         # for k in ("user_answers", "submitted"):
         #     st.session_state.pop(k, None)
 
-        context = (
-            st.session_state.quiz_context
-            if st.session_state.quiz_source == "chat"
-            else topic
-        )
-        if not context:
-            st.warning("Please provide a topic or select a chat.")
+        if st.session_state.quiz_source == "topic":
+            context = topic
+
+        elif st.session_state.quiz_source == "chat":
+            context = st.session_state.quiz_context
+
+        elif st.session_state.quiz_source == "file":
+            context = st.session_state.rag.build_quiz_context()
+
+        if st.session_state.quiz_source == "topic" and not topic:
+            st.warning("Please enter a topic.")
+            return
+
+        if st.session_state.quiz_source == "chat" and not st.session_state.quiz_context:
+            st.warning("No chat context available.")
+            return
+
+        if st.session_state.quiz_source == "file" and not uploaded_file:
+            st.warning("Please upload a file.")
             return
 
         generator = QuestionGenerator(llm)
         success = st.session_state.quiz_manager.generate_questions(
             generator=generator,
-            topic=context,
+            context=context,
             question_type=question_type,
             difficulty=difficulty,
             num_questions=num_questions,
