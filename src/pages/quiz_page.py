@@ -43,15 +43,19 @@ def render_quiz_page():
         uploaded_file = st.sidebar.file_uploader(
             "Upload document", type=["pdf", "txt", "docx"]
         )
-        
+
         if uploaded_file:
             file_id = uploaded_file.name
+
+            file_query = st.sidebar.text_input(
+                "Enter topic from document (optional)",
+                placeholder="e.g. Neural Networks, Chapter 2, Key Concepts",
+            )
 
             if st.session_state.get("last_uploaded_file") != file_id:
                 st.session_state.rag.ingest(uploaded_file)
                 st.session_state.last_uploaded_file = file_id
                 st.success("File processed successfully!")
-        
 
     if st.session_state.quiz_source == "file" and not st.session_state.rag.retriever:
         st.warning("File not processed yet.")
@@ -81,7 +85,7 @@ def render_quiz_page():
             context = st.session_state.quiz_context
 
         elif st.session_state.quiz_source == "file":
-            context = st.session_state.rag.build_quiz_context()
+            context = st.session_state.rag.build_quiz_context(user_query=file_query)
 
         if st.session_state.quiz_source == "topic" and not topic:
             st.warning("Please enter a topic.")
