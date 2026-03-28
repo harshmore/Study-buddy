@@ -1,6 +1,9 @@
 <h1>Quiz from documents</h1>
 <img width="1909" height="796" alt="image" src="https://github.com/user-attachments/assets/d3d3560d-7d83-40b7-b3d6-b26b17996ede" />
 
+<h1>Quiz from documents with user query</h1>
+<img width="1915" height="871" alt="image" src="https://github.com/user-attachments/assets/efcb5293-3958-47ed-a373-e07888b663c7" />
+
 <h1>Landing Page</h1>
 <img width="1712" height="911" alt="image" src="https://github.com/user-attachments/assets/129c2583-0fe8-4e65-9d52-159f1d18f602" />
 
