@@ -1,8 +1,11 @@
 import os
+import json
 import pandas as pd
 import streamlit as st
-from src.generator.question_generator import QuestionGenerator
 from datetime import datetime
+from src.generator.question_generator import QuestionGenerator
+
+USAGE_FILE = "usage.json"
 
 
 def rerun():
@@ -202,3 +205,47 @@ class QuizManager:
         except Exception as e:
             st.error(f"Failed to save results {e}")
             return None
+
+
+def check_daily_quota(user_id, has_api_key, limit=3):
+    if has_api_key:
+        return True
+
+    data = load_usage()
+    today = str(datetime.now().date())
+
+    if user_id not in data:
+        data[user_id] = {"date": today, "count": 0}
+
+    if data[user_id]["date"] != today:
+        data[user_id] = {"date": today, "count": 0}
+
+    if data[user_id]["count"] >= limit:
+        return False
+
+    return True
+
+
+def increment_quota(user_id):
+    data = load_usage()
+    today = str(datetime.now().date())
+
+    if user_id not in data:
+        data[user_id] = {"date": today, "count": 0}
+
+    data[user_id]["count"] += 1
+
+    save_usage(data)
+
+
+def load_usage():
+    if not os.path.exists(USAGE_FILE):
+        return {}
+
+    with open(USAGE_FILE, "r") as f:
+        return json.load(f)
+
+
+def save_usage(data):
+    with open(USAGE_FILE, "w") as f:
+        json.dump(data, f)

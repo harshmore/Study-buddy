@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 from src.config.settings import settings
-from src.utils.helper_functions import rerun
+from src.utils.helper_functions import rerun, check_daily_quota, increment_quota
 from src.pages.state import reset_quiz_state
 from src.generator.question_generator import QuestionGenerator
 from src.rag.pipeline import RAGPipeline
@@ -30,6 +30,16 @@ def render_quiz_page():
     if new_mode != prev_mode:
         reset_quiz_state()
         st.session_state.quiz_source = new_mode
+
+    api_key = st.sidebar.text_input(
+        "Enter GROQ API Key",
+        type="password",
+        help="Your key is not stored. Used only for this session.",
+    )
+    if api_key:
+        has_api_key = True
+    else:
+        has_api_key = False
 
     question_type = st.sidebar.selectbox(
         "Select question type",
@@ -72,11 +82,12 @@ def render_quiz_page():
     llm = st.sidebar.selectbox("Model", settings.MODELS, index=len(settings.MODELS) - 1)
 
     if st.sidebar.button("Generate Quiz"):
-        # st.session_state.quiz_generated = False
-        # st.session_state.quiz_submitted = False
 
-        # for k in ("user_answers", "submitted"):
-        #     st.session_state.pop(k, None)
+        if not check_daily_quota(st.session_state.user_id, has_api_key=has_api_key):
+            st.error(
+                "Free limit reached (3 quizzes/day). Add your GROQ API key for unlimited access."
+            )
+            st.stop()
 
         if st.session_state.quiz_source == "topic":
             context = topic
@@ -99,7 +110,7 @@ def render_quiz_page():
             st.warning("Please upload a file.")
             return
 
-        generator = QuestionGenerator(llm)
+        generator = QuestionGenerator(llm, api_key)
         success = st.session_state.quiz_manager.generate_questions(
             generator=generator,
             context=context,
@@ -108,10 +119,14 @@ def render_quiz_page():
             num_questions=num_questions,
         )
 
+        if success and not has_api_key:
+            increment_quota(st.session_state.user_id)
+
         st.session_state.quiz_generated = success
         rerun()
 
     if st.session_state.quiz_generated and st.session_state.quiz_manager.questions:
+
         st.header("📋 Quiz")
         st.session_state.quiz_manager.attempt_quiz()
 

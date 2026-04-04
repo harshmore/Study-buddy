@@ -3,9 +3,11 @@ from langchain_openai import ChatOpenAI
 from src.config.settings import settings
 
 
-def get_groq_llm(model):
+def get_groq_llm(model, api_key):
     return ChatGroq(
-        api_key=settings.GROQ_API_KEY, model=model, temperature=settings.TEMPERATURE
+        api_key=api_key if api_key else settings.GROQ_API_KEY,
+        model=model,
+        temperature=settings.TEMPERATURE,
     )
 
 

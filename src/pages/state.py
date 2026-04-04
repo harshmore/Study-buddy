@@ -1,6 +1,23 @@
+import uuid
 import streamlit as st
-from src.utils.helper_functions import QuizManager
 from src.rag.pipeline import RAGPipeline
+from src.utils.helper_functions import QuizManager
+from streamlit_cookies_manager import EncryptedCookieManager
+
+
+def cookie_session_state():
+
+    cookies = EncryptedCookieManager(prefix="quiz_app_", password="super-secret-key")
+
+    if not cookies.ready():
+        st.stop()
+
+    if "user_id" not in cookies:
+        cookies["user_id"] = str(uuid.uuid4())
+
+    user_id = cookies["user_id"]
+
+    st.session_state.user_id = user_id
 
 
 def init_session_state():

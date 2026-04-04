@@ -1,6 +1,6 @@
 import streamlit as st
 from dotenv import load_dotenv
-from src.pages.state import init_session_state
+from src.pages.state import cookie_session_state, init_session_state
 from src.pages.navigation import render_sidebar_navigation
 from src.pages.quiz_page import render_quiz_page
 from src.pages.chat_page import render_chat_page
@@ -12,6 +12,7 @@ def main():
     st.set_page_config(page_title="Study Buddy AI", page_icon="🎧🎧")
     st.title("Study Buddy AI")
 
+    cookie_session_state()
     init_session_state()
     render_sidebar_navigation()
 

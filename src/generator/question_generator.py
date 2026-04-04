@@ -18,8 +18,10 @@ from src.common.custom_exception import CustomException
 
 class QuestionGenerator:
 
-    def __init__(self, llm: str):
-        self.llm = get_openai_llm(llm) if llm.startswith("gpt") else get_groq_llm(llm)
+    def __init__(self, llm: str, api_key: str = ""):
+        self.llm = (
+            get_openai_llm(llm) if llm.startswith("gpt") else get_groq_llm(llm, api_key)
+        )
         self.logger = get_logger(self.__class__.__name__)
 
     def _retry_and_parse(

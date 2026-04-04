@@ -8,8 +8,10 @@ from src.llms.llm_client import get_groq_llm, get_openai_llm
 
 class ChatEngine:
 
-    def __init__(self, llm: str):
-        self.llm = get_openai_llm(llm) if llm.startswith("gpt") else get_groq_llm(llm)
+    def __init__(self, llm: str, api_key: str = ""):
+        self.llm = (
+            get_openai_llm(llm) if llm.startswith("gpt") else get_groq_llm(llm, api_key)
+        )
         self.logger = get_logger(self.__class__.__name__)
         self.logger.info("Conversation started")
 
