@@ -5,11 +5,8 @@
 
 <h2>🚀 Live Demo </h2>
 <p>
-👉 <strong>
-  <a href="https://huggingface.co/spaces/wovom/QuizGenie" target="_blank">
-    Try it here
-  </a>
-</strong>
+👉 https://huggingface.co/spaces/wovom/QuizGenie<strong>
+  
 </p>
 <br>
 
