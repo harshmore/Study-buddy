@@ -207,7 +207,7 @@ class QuizManager:
             return None
 
 
-def check_daily_quota(user_id, has_api_key, limit=3):
+def check_daily_quota(user_id, has_api_key, limit=5):
     if has_api_key:
         return True
 

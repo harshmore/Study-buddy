@@ -38,8 +38,17 @@ def render_quiz_page():
     )
     if api_key:
         has_api_key = True
+
     else:
         has_api_key = False
+
+    if not has_api_key:
+        st.warning(
+            f"""
+            - 🎯 **5 quizzes/day** without API key  
+            - 🔓 Add your GROQ key for unlimited access  
+            """
+        )
 
     question_type = st.sidebar.selectbox(
         "Select question type",
