@@ -94,7 +94,7 @@ def render_quiz_page():
 
         if not check_daily_quota(st.session_state.user_id, has_api_key=has_api_key):
             st.error(
-                "Free limit reached (3 quizzes/day). Add your GROQ API key for unlimited access."
+                "Free limit reached (5s quizzes/day). Add your GROQ API key for unlimited access."
             )
             st.stop()
 
